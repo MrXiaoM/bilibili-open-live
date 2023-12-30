@@ -9,4 +9,4 @@
 
 SDK 逻辑在子模块 [SDK](/sdk) 中，与 Minecraft 插件实现分离。
 
-使用示例详见 [CraftBLiveClient.java](src/main/java/top/mrxiaom/bili/CraftBLiveClient.java)
+使用示例详见 [CraftBLiveClient.java](src/main/java/top/mrxiaom/bili/bukkit/CraftBLiveClient.java)
