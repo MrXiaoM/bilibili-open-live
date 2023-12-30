@@ -1,0 +1,7 @@
+name: Bili
+version: '${version}'
+main: top.mrxiaom.bili.bukkit.BukkitMain
+api-version: '1.17'
+commands:
+  bili:
+    description: awa

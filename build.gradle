@@ -1,0 +1,71 @@
+plugins {
+    id "java"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+group = "top.mrxiaom"
+version = "1.0.0"
+
+allprojects {
+    group = rootProject.group
+    version = rootProject.version
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = "spigotmc-repo"
+            url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+        }
+        maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/groups/public/"
+        }
+    }
+}
+
+dependencies {
+    compileOnly("org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:2.11.5")
+    implementation(project(":sdk"))
+}
+
+shadowJar {
+    archiveClassifier = ""
+    dependencies {
+        exclude(dependency("org.slf4j:slf4j-api"))
+        exclude(dependency("com.google.code.gson:gson"))
+    }
+    relocate("org.intellij.lang.annotations", "top.mrxiaom.bili.utils.annotations.intellij")
+    relocate("org.jetbrains.annotations", "top.mrxiaom.bili.utils.annotations.jetbrains")
+    relocate("org.java_websocket", "top.mrxiaom.bili.utils.ws")
+    relocate("org.apache.commons", "top.mrxiaom.bili.utils.commons")
+    relocate("org.apache.http", "top.mrxiaom.bili.utils.http")
+    relocate("org.checkerframework", "top.mrxiaom.bili.utils.checkerframework")
+}
+tasks.build.dependsOn(shadowJar)
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset "UTF-8"
+    filesMatching("plugin.yml") {
+        expand props
+    }
+}

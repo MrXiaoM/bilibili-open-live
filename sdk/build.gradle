@@ -1,0 +1,10 @@
+plugins {
+    id "java"
+}
+
+dependencies {
+    implementation("com.google.code.gson:gson:2.10")
+    implementation('org.jetbrains:annotations:24.0.1')
+    implementation("org.java-websocket:Java-WebSocket:1.5.4")
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
+}
