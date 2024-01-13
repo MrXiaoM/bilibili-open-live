@@ -1,16 +1,19 @@
 package top.mrxiaom.bili.bukkit;
 
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.bili.bukkit.utils.Util;
 import top.mrxiaom.bili.live.runtime.utils.SignHolder;
 
-import static top.mrxiaom.bili.bukkit.utils.Util.registerPlaceholder;
-import static top.mrxiaom.bili.bukkit.utils.Util.t;
+import java.util.List;
+
+import static top.mrxiaom.bili.bukkit.utils.Util.*;
 
 public final class BukkitMain extends JavaPlugin {
     String appId = "";
@@ -79,5 +82,17 @@ public final class BukkitMain extends JavaPlugin {
             }
         }
         return true;
+    }
+    List<String> empty = Lists.newArrayList();
+    List<String> arg0_op = Lists.newArrayList("connect", "close", "debug", "reload");
+    List<String> arg0_live = Lists.newArrayList("connect", "close");
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        if (args.length == 1) {
+            if (sender.isOp()) return startsWith(args[0], arg0_op);
+            if (sender.hasPermission("bili.live")) return startsWith(args[0], arg0_live);
+        }
+        return empty;
     }
 }
