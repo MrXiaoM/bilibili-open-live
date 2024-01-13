@@ -1,5 +1,6 @@
 package top.mrxiaom.bili.bukkit;
 
+import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +31,16 @@ public class PlaceholderHook extends PlaceholderExpansion {
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         CraftBLiveClient client = plugin.client;
+        if (params.equalsIgnoreCase("status")) {
+            return bool(client != null && client.getStatus());
+        }
+        if (params.equalsIgnoreCase("status_display")) {
+            boolean status = client != null && client.getStatus();
+            return status ? "§a已连接" : "§7未连接";
+        }
+
         if (client == null) {
-            return "§7未开播";
+            return "§7未连接";
         }
         if (params.equalsIgnoreCase("name")) {
             return client.startInfo.data.anchorInfo.uName;
@@ -46,5 +55,9 @@ public class PlaceholderHook extends PlaceholderExpansion {
             return String.valueOf(client.getPopularity());
         }
         return super.onRequest(player, params);
+    }
+
+    public static String bool(boolean value) {
+        return value ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
     }
 }

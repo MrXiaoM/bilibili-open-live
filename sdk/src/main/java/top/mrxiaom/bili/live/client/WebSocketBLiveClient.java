@@ -91,6 +91,10 @@ public abstract class WebSocketBLiveClient extends BLiveClient {
         webSocketClient.connect();
     }
 
+    public boolean getStatus() {
+        return webSocketClient != null && webSocketClient.isOpen();
+    }
+
     @Override
     public void disconnect() {
         if (webSocketClient != null) {
