@@ -20,6 +20,11 @@ public final class BukkitMain extends JavaPlugin {
     String defaultCode = "";
     CraftBLiveClient client = null;
     public boolean debug = false;
+
+    @Nullable
+    public CraftBLiveClient getClient() {
+        return client;
+    }
     @Override
     public void onEnable() {
         reloadConfig();
