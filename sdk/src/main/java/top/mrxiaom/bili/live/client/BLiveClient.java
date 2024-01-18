@@ -24,6 +24,8 @@ public abstract class BLiveClient {
     public abstract void onReceivedSuperChat(SuperChat data);
 
     public abstract void onReceivedSuperChatDel(SuperChatDel data);
+    
+    public abstract void onReceivedLike(Like data);
 
     public abstract void onReceivedRawNotice(String raw, JsonObject json);
 
@@ -122,7 +124,8 @@ public abstract class BLiveClient {
                     onReceivedGuardBuy(guard);
                 }
                 case "LIVE_OPEN_PLATFORM_LIKE" -> {
-                    var like = BApi.gson.fromJson(data, )
+                    var like = BApi.gson.fromJson(data, Like.class);
+                    onReceivedLike(like);
                 }
             }
         } catch (Exception e) {

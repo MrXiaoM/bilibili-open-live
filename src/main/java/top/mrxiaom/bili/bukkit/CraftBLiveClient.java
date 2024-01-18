@@ -79,6 +79,14 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     }
 
     @Override
+    public void onReceivedLike(Like data) {
+        if (plugin.debug) {
+            logger.info("收到 " + data.userName + "(" + data.uid + ") 的 " + data.likeCount + " 个点赞");
+        }
+        Bukkit.getPluginManager().callEvent(new LiveLikeEvent(data));
+    }
+
+    @Override
     public void onPopularityUpdate(int popularity) {
         Bukkit.getPluginManager().callEvent(new LivePopularityUpdateEvent(this.popularity = popularity));
     }

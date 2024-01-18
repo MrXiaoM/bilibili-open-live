@@ -151,6 +151,11 @@ public abstract class WebSocketBLiveClient extends BLiveClient {
     }
 
     @Override
+    public void onReceivedLike(Like data) {
+
+    }
+
+    @Override
     public void onReceivedRawNotice(String raw, JsonObject json) {
 
     }
