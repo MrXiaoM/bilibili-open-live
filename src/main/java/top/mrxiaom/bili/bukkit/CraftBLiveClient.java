@@ -1,18 +1,27 @@
 package top.mrxiaom.bili.bukkit;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
 import top.mrxiaom.bili.bukkit.events.*;
 import top.mrxiaom.bili.live.client.BApiClient;
 import top.mrxiaom.bili.live.client.WebSocketBLiveClient;
-import top.mrxiaom.bili.live.runtime.data.*;
 import top.mrxiaom.bili.live.client.data.AppStartInfo;
+import top.mrxiaom.bili.live.runtime.data.*;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+
+import static top.mrxiaom.bili.bukkit.utils.Util.stackTrace;
 
 public class CraftBLiveClient extends WebSocketBLiveClient {
     BukkitMain plugin;
     String appId;
     AppStartInfo startInfo;
     int popularity = 0;
+    int online = 0;
     public CraftBLiveClient(BukkitMain plugin, String appId, AppStartInfo startInfo) {
         super(plugin.getLogger(), startInfo.data.websocketInfo.wssLink, startInfo.data.websocketInfo.authBody);
         this.plugin = plugin;
@@ -22,6 +31,10 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
 
     public int getPopularity() {
         return popularity;
+    }
+
+    public int getOnline() {
+        return online;
     }
 
     @Override
@@ -87,13 +100,41 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     }
 
     @Override
-    public void onPopularityUpdate(int popularity) {
-        Bukkit.getPluginManager().callEvent(new LivePopularityUpdateEvent(this.popularity = popularity));
+    public void onPopularityUpdate(int data) {
+        this.popularity = data;
+        JsonObject roomData = getRoomDataById(String.valueOf(startInfo.data.anchorInfo.roomId));
+        if (roomData != null) {
+            online = roomData.get("online").getAsInt();
+            if (plugin.debug) {
+                plugin.getLogger().info("热度更新: " + popularity + ", 在线人数更新: " + online);
+            }
+        }
+        Bukkit.getPluginManager().callEvent(new LivePopularityUpdateEvent(popularity, online));
     }
 
     @Override
     public void onReceivedRawNotice(String raw, JsonObject json) {
         super.onReceivedRawNotice(raw, json);
+    }
+
+    public JsonObject getRoomDataById(String roomId) {
+        try {
+            String url = "https://api.live.bilibili.com/xlive/web-room/v1/index/getRoomBaseInfo?room_ids=" + roomId + "&req_biz=video";
+            URLConnection conn = new URL(url).openConnection();
+            conn.connect();
+
+            String str;
+            try (InputStream is = conn.getInputStream()) {
+                str = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            }
+            JsonObject json = JsonParser.parseString(str).getAsJsonObject();
+            JsonObject data = json.get("data").getAsJsonObject();
+            JsonObject byRoomIds = data.get("by_room_ids").getAsJsonObject();
+            return byRoomIds.get(roomId).getAsJsonObject();
+        } catch (Throwable t) {
+            stackTrace(plugin.getLogger(), t);
+            return null;
+        }
     }
 
     public static CraftBLiveClient connect(BukkitMain plugin, String code, String appId) {

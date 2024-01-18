@@ -16,11 +16,17 @@ public class LivePopularityUpdateEvent extends Event {
         return handlers;
     }
     int data;
-    public LivePopularityUpdateEvent(int data) {
+    int online;
+    public LivePopularityUpdateEvent(int data, int online) {
         this.data = data;
+        this.online = online;
     }
 
     public int getData() {
         return data;
+    }
+
+    public int getOnline() {
+        return online;
     }
 }

@@ -30,7 +30,7 @@ public class PlaceholderHook extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
-        CraftBLiveClient client = plugin.client;
+        CraftBLiveClient client = plugin.getClient();
         if (params.equalsIgnoreCase("status")) {
             return bool(client != null && client.getStatus());
         }
@@ -53,6 +53,9 @@ public class PlaceholderHook extends PlaceholderExpansion {
         }
         if (params.equalsIgnoreCase("pop")) {
             return String.valueOf(client.getPopularity());
+        }
+        if (params.equalsIgnoreCase("online")) {
+            return String.valueOf(client.getOnline());
         }
         return super.onRequest(player, params);
     }
