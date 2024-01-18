@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import top.mrxiaom.bili.bukkit.utils.Util;
 import top.mrxiaom.bili.live.runtime.utils.SignHolder;
 
 import java.util.List;
@@ -75,7 +74,7 @@ public final class BukkitMain extends JavaPlugin {
                         client = CraftBLiveClient.connect(this, code, appId);
                         t(sender, "&a连接成功");
                     } catch (Throwable t) {
-                        t.printStackTrace();
+                        stackTrace(getLogger(), t);
                         t(sender, "&4连接失败: &c" + t.getMessage(),
                                 "&e请联系管理员查阅控制台日志获取详细信息");
                     }
