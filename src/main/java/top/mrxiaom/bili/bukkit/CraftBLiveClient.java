@@ -37,6 +37,10 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
         return online;
     }
 
+    public AppStartInfo getStartInfo() {
+        return startInfo;
+    }
+
     @Override
     public void disconnect() {
         BApiClient.endInteractivePlay(appId, startInfo.data.gameInfo.gameId);
