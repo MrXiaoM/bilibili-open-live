@@ -4,11 +4,26 @@ import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.command.CommandSender;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 public class Util {
+    public static String stackTrace(Throwable t) {
+        return stackTrace(null, t);
+    }
+    public static String stackTrace(Logger logger, Throwable t) {
+        if (t == null) return "";
+        StringWriter sw = new StringWriter();
+        try (PrintWriter pw = new PrintWriter(sw)) {
+            t.printStackTrace(pw);
+        }
+        String s = sw.toString();
+        if (logger != null) logger.warning(s);
+        return s;
+    }
     public static void registerPlaceholder(Logger logger, PlaceholderExpansion placeholder) {
         PlaceholderAPIPlugin.getInstance()
                 .getLocalExpansionManager()
