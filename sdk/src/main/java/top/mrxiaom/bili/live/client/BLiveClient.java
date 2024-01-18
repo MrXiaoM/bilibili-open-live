@@ -121,6 +121,9 @@ public abstract class BLiveClient {
                     var guard = BApi.gson.fromJson(data, Guard.class);
                     onReceivedGuardBuy(guard);
                 }
+                case "LIVE_OPEN_PLATFORM_LIKE" -> {
+                    var like = BApi.gson.fromJson(data, )
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

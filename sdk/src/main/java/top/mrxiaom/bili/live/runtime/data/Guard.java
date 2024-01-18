@@ -2,6 +2,11 @@ package top.mrxiaom.bili.live.runtime.data;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * 大航海数据
+ *
+ * @see <a href="https://open-live.bilibili.com/document/f9ce25be-312e-1f4a-85fd-fef21f1637f8">文档</a>
+ */
 public class Guard {
     /**
      * 大航海等级

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * 礼物数据
  *
- * @see <a href="https://open-live.bilibili.com/doc/2/2/1">文档</a>
+ * @see <a href="https://open-live.bilibili.com/document/f9ce25be-312e-1f4a-85fd-fef21f1637f8">文档</a>
  */
 public class SendGift {
 
