@@ -23,7 +23,7 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     int popularity = 0;
     int online = 0;
     public CraftBLiveClient(BukkitMain plugin, String appId, AppStartInfo startInfo) {
-        super(plugin.getLogger(), startInfo.data.websocketInfo.wssLink, startInfo.data.websocketInfo.authBody);
+        super(plugin.getLogger(), startInfo.data.gameInfo.gameId, startInfo.data.websocketInfo.wssLink, startInfo.data.websocketInfo.authBody);
         this.plugin = plugin;
         this.startInfo = startInfo;
         this.appId = appId;
@@ -43,8 +43,8 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
 
     @Override
     public void disconnect() {
-        BApiClient.endInteractivePlay(appId, startInfo.data.gameInfo.gameId);
         super.disconnect();
+        BApiClient.endInteractivePlay(appId, startInfo.data.gameInfo.gameId);
     }
 
     @Override

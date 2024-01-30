@@ -2,16 +2,37 @@ package top.mrxiaom.bili.live.client;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import top.mrxiaom.bili.live.client.data.EmptyInfo;
 import top.mrxiaom.bili.live.runtime.data.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 public abstract class BLiveClient {
-    Timer timer = null;
-    protected long heartbeatTime = 20 * 1000;
+    protected final Logger logger;
+    protected Timer projectTimer = null;
+    protected Timer timer = null;
+    /**
+     * 长连心跳间隔时间
+     */
+    protected long heartbeatTimeWs = 30 * 1000L;
+    /**
+     * 项目心跳间隔时间
+     */
+    protected long heartbeatTime = 20 * 1000L;
     protected String token;
+    protected String gameId;
+    public BLiveClient(Logger logger, String gameId) {
+        this.logger = logger;
+        this.gameId = gameId;
+        sendProjectHeartbeat();
+    }
+
+    public abstract boolean getStatus();
 
     public abstract void onOpen();
 
@@ -31,9 +52,28 @@ public abstract class BLiveClient {
 
     public abstract void onPopularityUpdate(int popularity);
 
-    public abstract void connect();
+    public void connect() {
+        if (projectTimer != null) projectTimer.cancel();
+        projectTimer = new Timer();
+        // 项目心跳
+        projectTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendProjectHeartbeat();
+            }
+        }, heartbeatTime, heartbeatTime);
+    }
 
-    public abstract void disconnect();
+    public void disconnect() {
+        if (projectTimer != null) {
+            projectTimer.cancel();
+            projectTimer = null;
+        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
 
     public abstract void close();
 
@@ -46,12 +86,29 @@ public abstract class BLiveClient {
 
         if (timer != null) timer.cancel();
         timer = new Timer();
+        // 长连心跳
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                send(Packet.heartbeat());
+                if (getStatus()) {
+                    send(Packet.heartbeat());
+                    logger.info("长连心跳成功");
+                }
             }
-        }, 0, heartbeatTime);
+        }, 0, heartbeatTimeWs);
+    }
+
+    /**
+     * 发送项目心跳。
+     * 注意事项：项目心跳**必须**在长连连接之前发送，否则长连连接后过期。
+     */
+    protected void sendProjectHeartbeat() {
+        EmptyInfo result = BApiClient.heartBeatInteractivePlay(gameId);
+        if (result.code != 0) {
+            logger.warning("项目心跳失败, code=" + result.code + ", message=" + result.message + ", gameId=" + gameId);
+        } else {
+            logger.info("项目心跳成功");
+        }
     }
 
     protected void processPacket(Packet packet) {
@@ -129,8 +186,16 @@ public abstract class BLiveClient {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            printStackTrace(e);
         }
+    }
+
+    protected void printStackTrace(Throwable t) {
+        StringWriter sw = new StringWriter();
+        try (PrintWriter pw = new PrintWriter(sw)) {
+            t.printStackTrace(pw);
+        }
+        logger.warning(sw.toString());
     }
 
     public static int bytesToInt(byte[] bytes, int offset) {

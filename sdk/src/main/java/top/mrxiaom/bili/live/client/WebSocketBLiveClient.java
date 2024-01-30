@@ -11,10 +11,11 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 public abstract class WebSocketBLiveClient extends BLiveClient {
-    private static Map<Integer, String> codes = new HashMap<>() {{
+    private static final Map<Integer, String> codes = new HashMap<>() {{
         put(1000, "NORMAL");
         put(1001, "GOING_AWAY");
         put(1002, "PROTOCOL_ERROR");
@@ -36,10 +37,9 @@ public abstract class WebSocketBLiveClient extends BLiveClient {
     }};
     List<String> wssLink;
     WebSocketClient webSocketClient;
-    protected final Logger logger;
 
-    public WebSocketBLiveClient(Logger logger, List<String> wssLink, String token) {
-        this.logger = logger;
+    public WebSocketBLiveClient(Logger logger, String gameId, List<String> wssLink, String token) {
+        super(logger, gameId);
         this.wssLink = wssLink;
         this.token = token;
     }
@@ -51,12 +51,14 @@ public abstract class WebSocketBLiveClient extends BLiveClient {
             throw new IllegalStateException("wsslink is invalid");
         }
 
-        disconnect();
+        disconnect(); // 关闭连接会关掉项目心跳的定时器，super.connect(); 必须在 disconnect(); 后面
+        super.connect();
+
         URI uri = null;
         try {
             uri = new URI(url);
         } catch (Throwable t) {
-            t.printStackTrace();
+            printStackTrace(t);
         }
         if (uri == null) throw new IllegalStateException("Can't parse URI " + url);
         webSocketClient = new WebSocketClient(uri) {
@@ -85,12 +87,13 @@ public abstract class WebSocketBLiveClient extends BLiveClient {
 
             @Override
             public void onError(Exception ex) {
-                ex.printStackTrace();
+                printStackTrace(ex);
             }
         };
         webSocketClient.connect();
     }
 
+    @Override
     public boolean getStatus() {
         return webSocketClient != null && webSocketClient.isOpen();
     }
@@ -100,6 +103,7 @@ public abstract class WebSocketBLiveClient extends BLiveClient {
         if (webSocketClient != null) {
             webSocketClient.close();
         }
+        super.disconnect();
     }
 
     @Override
