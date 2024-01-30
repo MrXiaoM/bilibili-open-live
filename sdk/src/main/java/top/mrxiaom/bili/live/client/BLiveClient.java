@@ -29,7 +29,6 @@ public abstract class BLiveClient {
     public BLiveClient(Logger logger, String gameId) {
         this.logger = logger;
         this.gameId = gameId;
-        sendProjectHeartbeat();
     }
 
     public abstract boolean getStatus();
@@ -61,7 +60,7 @@ public abstract class BLiveClient {
             public void run() {
                 sendProjectHeartbeat();
             }
-        }, heartbeatTime, heartbeatTime);
+        }, 0, heartbeatTime);
     }
 
     public void disconnect() {
@@ -105,7 +104,7 @@ public abstract class BLiveClient {
     protected void sendProjectHeartbeat() {
         EmptyInfo result = BApiClient.heartBeatInteractivePlay(gameId);
         if (result.code != 0) {
-            logger.warning("项目心跳失败, code=" + result.code + ", message=" + result.message + ", gameId=" + gameId);
+            logger.warning("项目心跳失败, code=" + result.code + ", message=" + result.message);
         } else {
             logger.info("项目心跳成功");
         }

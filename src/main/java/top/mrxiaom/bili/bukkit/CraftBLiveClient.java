@@ -1,5 +1,6 @@
 package top.mrxiaom.bili.bukkit;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
@@ -22,6 +23,7 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     AppStartInfo startInfo;
     int popularity = 0;
     int online = 0;
+
     public CraftBLiveClient(BukkitMain plugin, String appId, AppStartInfo startInfo) {
         super(plugin.getLogger(), startInfo.data.gameInfo.gameId, startInfo.data.websocketInfo.wssLink, startInfo.data.websocketInfo.authBody);
         this.plugin = plugin;
@@ -42,8 +44,8 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     }
 
     @Override
-    public void disconnect() {
-        super.disconnect();
+    public void close() {
+        super.close();
         BApiClient.endInteractivePlay(appId, startInfo.data.gameInfo.gameId);
     }
 
