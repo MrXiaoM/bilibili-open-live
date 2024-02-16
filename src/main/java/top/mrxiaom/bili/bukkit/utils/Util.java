@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -40,7 +41,7 @@ public class Util {
         return true;
     }
 
-    public static List<String> startsWith(String s, List<String> list) {
+    public static List<String> startsWith(String s, Collection<String> list) {
         List<String> result = new ArrayList<>();
         for (String s1 : list) {
             if (s1.toLowerCase().startsWith(s.toLowerCase())) result.add(s1);

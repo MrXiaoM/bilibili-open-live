@@ -1,4 +1,16 @@
-app-id: '1705565723851'
+# 以下三个配置在开放平台的项目中获得
+# https://open-live.bilibili.com/open-manage
 
+# 我的项目 -> 项目ID
+app-id: '1705565723851'
+# 个人资料 -> access_key_id
 access-key-id: ''
+# 个人资料 -> access_key_secred
 access-key-secret: ''
+
+# 预设的默认连接码，/bili connect 不输入连接码时默认使用的连接码
+code: ''
+
+# 预设连接码列表，使用 /bili code <名称> 来连接开放平台，名称会出现在TAB补全上
+codes:
+  猫猫: 'CONNECT0CODE'
