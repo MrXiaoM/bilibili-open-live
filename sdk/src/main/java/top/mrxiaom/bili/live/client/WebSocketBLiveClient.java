@@ -11,11 +11,10 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
 import java.util.logging.Logger;
 
 public abstract class WebSocketBLiveClient extends BLiveClient {
-    private static final Map<Integer, String> codes = new HashMap<>() {{
+    private static final Map<Integer, String> codes = new HashMap<Integer, String>() {{
         put(1000, "NORMAL");
         put(1001, "GOING_AWAY");
         put(1002, "PROTOCOL_ERROR");
@@ -46,7 +45,7 @@ public abstract class WebSocketBLiveClient extends BLiveClient {
 
     @Override
     public void connect() {
-        var url = wssLink.get(0);
+        String url = wssLink.get(0);
         if (url == null || url.trim().isEmpty()) {
             throw new IllegalStateException("wsslink is invalid");
         }

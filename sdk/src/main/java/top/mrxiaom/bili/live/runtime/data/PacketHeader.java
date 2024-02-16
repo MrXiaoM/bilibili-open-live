@@ -50,7 +50,7 @@ public class PacketHeader {
      * @param sequenceId      序列号
      */
     public static byte[] getBytes(int packetLength, short headerLength, ProtocolVersion protocolVersion, Operation operation, int sequenceId) {
-        var bytes = new byte[KPacketHeaderLength];
+        byte[] bytes = new byte[KPacketHeaderLength];
         writeInt32BigEndian(bytes, 0, 4, packetLength);
         writeInt16BigEndian(bytes, 4, 6, headerLength);
         writeInt16BigEndian(bytes, 6, 8, (short) protocolVersion.value);

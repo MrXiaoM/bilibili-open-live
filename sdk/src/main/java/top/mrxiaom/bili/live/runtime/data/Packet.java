@@ -58,9 +58,9 @@ public class Packet {
             header.packetLength = header.headerLength + packetBody.length;
         else
             header.packetLength = header.headerLength;
-        var arr = new byte[header.packetLength];
+        byte[] arr = new byte[header.packetLength];
 
-        var headerArr = header.toBytes();
+        byte[] headerArr = header.toBytes();
         for (int i = 0; i < headerArr.length && i < header.headerLength; i++) {
             arr[i] = headerArr[i];
         }
@@ -112,7 +112,7 @@ public class Packet {
     }
 
     public static Packet authority(String token, ProtocolVersion protocolVersion) {
-        var obj = token.getBytes(StandardCharsets.UTF_8);
+        byte[] obj = token.getBytes(StandardCharsets.UTF_8);
 
         Packet packet = new Packet();
 

@@ -1,6 +1,5 @@
 package top.mrxiaom.bili.bukkit;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
@@ -10,6 +9,8 @@ import top.mrxiaom.bili.live.client.WebSocketBLiveClient;
 import top.mrxiaom.bili.live.client.data.AppStartInfo;
 import top.mrxiaom.bili.live.runtime.data.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -128,18 +129,26 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
             String url = "https://api.live.bilibili.com/xlive/web-room/v1/index/getRoomBaseInfo?room_ids=" + roomId + "&req_biz=video";
             URLConnection conn = new URL(url).openConnection();
             conn.connect();
-
-            String str;
-            try (InputStream is = conn.getInputStream()) {
-                str = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            }
-            JsonObject json = JsonParser.parseString(str).getAsJsonObject();
+            String str = readString(conn);
+            JsonObject json = new JsonParser().parse(str).getAsJsonObject();
             JsonObject data = json.get("data").getAsJsonObject();
             JsonObject byRoomIds = data.get("by_room_ids").getAsJsonObject();
             return byRoomIds.get(roomId).getAsJsonObject();
         } catch (Throwable t) {
             stackTrace(plugin.getLogger(), t);
             return null;
+        }
+    }
+
+    private static String readString(URLConnection conn) throws IOException {
+        try (InputStream is = conn.getInputStream()) {
+            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+                byte[] buffer = new byte[1024];
+                for (int length; (length = is.read(buffer)) != -1;) {
+                    os.write(buffer, 0, length);
+                }
+                return new String(os.toByteArray(), StandardCharsets.UTF_8);
+            }
         }
     }
 

@@ -79,21 +79,21 @@ public class BApi {
 
 
     public static String startInteractivePlay(String code, String appId) {
-        var postUrl = getOpenLiveDomain() + k_InteractivePlayStart;
-        var param = "{\"code\":\"" + code + "\",\"app_id\":" + appId + "}";
+        String postUrl = getOpenLiveDomain() + k_InteractivePlayStart;
+        String param = "{\"code\":\"" + code + "\",\"app_id\":" + appId + "}";
 
         return requestWebUTF8(postUrl, param);
     }
 
     public static String endInteractivePlay(String appId, String gameId) {
-        var postUrl = getOpenLiveDomain() + k_InteractivePlayEnd;
-        var param = "{\"app_id\":" + appId + ",\"game_id\":\"" + gameId + "\"}";
+        String postUrl = getOpenLiveDomain() + k_InteractivePlayEnd;
+        String param = "{\"app_id\":" + appId + ",\"game_id\":\"" + gameId + "\"}";
 
         return requestWebUTF8(postUrl, param);
     }
 
     public static String heartBeatInteractivePlay(String gameId) {
-        var postUrl = getOpenLiveDomain() + k_InteractivePlayHeartBeat;
+        String postUrl = getOpenLiveDomain() + k_InteractivePlayHeartBeat;
         String param = "";
         if (gameId != null) {
             param = "{\"game_id\":\"" + gameId + "\"}";
@@ -103,11 +103,11 @@ public class BApi {
     }
 
     public static String batchHeartBeatInteractivePlay(List<String> gameIds) {
-        var postUrl = getOpenLiveDomain() + k_InteractivePlayBatchHeartBeat;
+        String postUrl = getOpenLiveDomain() + k_InteractivePlayBatchHeartBeat;
         GameIds games = new GameIds();
         games.gameIds = gameIds;
 
-        var param = gson.toJson(games);
+        String param = gson.toJson(games);
         return requestWebUTF8(postUrl, param);
     }
 }

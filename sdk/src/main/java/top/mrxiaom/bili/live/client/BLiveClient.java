@@ -1,5 +1,6 @@
 package top.mrxiaom.bili.live.client;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import top.mrxiaom.bili.live.client.data.EmptyInfo;
@@ -111,7 +112,7 @@ public abstract class BLiveClient {
     }
 
     protected void processPacket(Packet packet) {
-        var header = packet.header;
+        PacketHeader header = packet.header;
         switch (header.protocolVersion) {
             case UnCompressed:
             case HeartBeat:
@@ -132,18 +133,25 @@ public abstract class BLiveClient {
         }
 
         switch (header.operation) {
-            case AuthorityResponse -> onOpen();
-            case HeartBeatResponse -> {
+            case AuthorityResponse: {
+                onOpen();
+                break;
+            }
+            case HeartBeatResponse: {
                 // reverse byte[]
                 for (int i = 0, j = packet.packetBody.length - 1; i < j; i++, j--) {
                     byte tmp = packet.packetBody[i];
                     packet.packetBody[i] = packet.packetBody[j];
                     packet.packetBody[j] = tmp;
                 }
-                var popularity = bytesToInt(packet.packetBody, 0);
+                int popularity = bytesToInt(packet.packetBody, 0);
                 onPopularityUpdate(popularity);
+                break;
             }
-            case ServerNotify -> processNotice(new String(packet.packetBody, StandardCharsets.UTF_8));
+            case ServerNotify: {
+                processNotice(new String(packet.packetBody, StandardCharsets.UTF_8));
+                break;
+            }
 
             // HeartBeat packet request, only send by client
             // This operation key only used for sending authority packet by client
@@ -152,36 +160,42 @@ public abstract class BLiveClient {
     }
 
     protected void processNotice(String rawMessage) {
-        var json = JsonParser.parseString(rawMessage).getAsJsonObject();
+        JsonObject json = JsonParser.parseString(rawMessage).getAsJsonObject();
         onReceivedRawNotice(rawMessage, json);
-        var data = json.get("data");
+        JsonElement data = json.get("data");
         if (data == null)
             return;
         try {
             switch (json.get("cmd").getAsString()) {
-                case "LIVE_OPEN_PLATFORM_DM" -> {
-                    var dm = BApi.gson.fromJson(data, Dm.class);
+                case "LIVE_OPEN_PLATFORM_DM": {
+                    Dm dm = BApi.gson.fromJson(data, Dm.class);
                     onReceivedDanmaku(dm);
+                    break;
                 }
-                case "LIVE_OPEN_PLATFORM_SUPER_CHAT" -> {
-                    var superChat = BApi.gson.fromJson(data, SuperChat.class);
+                case "LIVE_OPEN_PLATFORM_SUPER_CHAT": {
+                    SuperChat superChat = BApi.gson.fromJson(data, SuperChat.class);
                     onReceivedSuperChat(superChat);
+                    break;
                 }
-                case "LIVE_OPEN_PLATFORM_SUPER_CHAT_DEL" -> {
-                    var superChatDel = BApi.gson.fromJson(data, SuperChatDel.class);
+                case "LIVE_OPEN_PLATFORM_SUPER_CHAT_DEL": {
+                    SuperChatDel superChatDel = BApi.gson.fromJson(data, SuperChatDel.class);
                     onReceivedSuperChatDel(superChatDel);
+                    break;
                 }
-                case "LIVE_OPEN_PLATFORM_SEND_GIFT" -> {
-                    var gift = BApi.gson.fromJson(data, SendGift.class);
+                case "LIVE_OPEN_PLATFORM_SEND_GIFT": {
+                    SendGift gift = BApi.gson.fromJson(data, SendGift.class);
                     onReceivedGift(gift);
+                    break;
                 }
-                case "LIVE_OPEN_PLATFORM_GUARD" -> {
-                    var guard = BApi.gson.fromJson(data, Guard.class);
+                case "LIVE_OPEN_PLATFORM_GUARD": {
+                    Guard guard = BApi.gson.fromJson(data, Guard.class);
                     onReceivedGuardBuy(guard);
+                    break;
                 }
-                case "LIVE_OPEN_PLATFORM_LIKE" -> {
-                    var like = BApi.gson.fromJson(data, Like.class);
+                case "LIVE_OPEN_PLATFORM_LIKE": {
+                    Like like = BApi.gson.fromJson(data, Like.class);
                     onReceivedLike(like);
+                    break;
                 }
             }
         } catch (Exception e) {

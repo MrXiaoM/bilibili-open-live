@@ -22,7 +22,7 @@ public class SignHolder {
     }
 
     public static Map<String, String> orderAndMd5(String jsonParam) {
-        var keyValuePairs = new HashMap<String, String>();
+        Map<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("x-bili-accesskeyid", accessKeyId);
         keyValuePairs.put("x-bili-content-md5", md5(jsonParam));
         keyValuePairs.put("x-bili-signature-method", "HMAC-SHA256");
@@ -46,7 +46,7 @@ public class SignHolder {
         List<String> sig = new ArrayList<>();
         List<String> keys = new ArrayList<>(keyValuePairs.keySet());
         Collections.sort(keys);
-        for (var key : keys) {
+        for (String key : keys) {
             sig.add(key + ":" + keyValuePairs.get(key));
         }
         return hmacSHA256(String.join("\n", sig), accessKeySecret);
@@ -65,12 +65,12 @@ public class SignHolder {
     }
 
     public static void setReqHeader(HttpEntityEnclosingRequestBase req, String jsonParam, String cookie) {
-        var sortDic = orderAndMd5(jsonParam);
-        var auth = calculateSignature(sortDic);
+        Map<String, String> sortDic = orderAndMd5(jsonParam);
+        String auth = calculateSignature(sortDic);
 
         List<String> keys = new ArrayList<>(sortDic.keySet());
         Collections.sort(keys);
-        for (var key : keys) {
+        for (String key : keys) {
             req.setHeader(key, sortDic.get(key));
         }
 
@@ -83,7 +83,7 @@ public class SignHolder {
             req.setHeader("Cookie", cookie);
         }
 
-        var bytes = jsonParam.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = jsonParam.getBytes(StandardCharsets.UTF_8);
         //req.setHeader("Content-Length", String.valueOf(bytes.length));
         InputStreamEntity entity = new InputStreamEntity(new ByteArrayInputStream(bytes));
         req.setEntity(entity);
