@@ -50,9 +50,16 @@ public class AppStartInfo {
         @SerializedName("uface")
         public String uFace;
         /**
-         * 主播Uid
+         * 主播Uid (即将弃用)
          */
+        @Deprecated
         @SerializedName("uid")
-        public String uid;
+        public long uid = -1;
+
+        /**
+         * 用户唯一标识
+         */
+        @SerializedName("open_id")
+        public String openId;
     }
 }

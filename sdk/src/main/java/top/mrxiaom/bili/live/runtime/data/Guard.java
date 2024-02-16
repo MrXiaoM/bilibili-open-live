@@ -63,10 +63,17 @@ public class Guard {
      */
     public static class UserInfo {
         /**
-         * 购买大航海的用户UID
+         * 购买大航海的用户UID (即将弃用)
          */
+        @Deprecated
         @SerializedName("uid")
-        public long uid;
+        public long uid = -1;
+
+        /**
+         * 用户唯一标识
+         */
+        @SerializedName("open_id")
+        public String openId;
 
         /**
          * 购买大航海的用户昵称

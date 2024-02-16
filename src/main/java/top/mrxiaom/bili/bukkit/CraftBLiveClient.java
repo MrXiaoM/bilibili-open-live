@@ -63,7 +63,7 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     @Override
     public void onReceivedDanmaku(Dm data) {
         if (plugin.debug) {
-            logger.info("收到弹幕 " + data.userName + "(" + data.uid + "): " + data.msg);
+            logger.info("收到弹幕 " + data.userName + "(" + data.openId + "): " + data.msg);
         }
         Bukkit.getPluginManager().callEvent(new LiveDanmakuEvent(data));
     }
@@ -71,7 +71,7 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     @Override
     public void onReceivedGift(SendGift data) {
         if (plugin.debug) {
-            logger.info("收到礼物 " + data.userName + "(" + data.uid + "): " + data.giftName + "(" + data.giftId + ") * " + data.giftNum);
+            logger.info("收到礼物 " + data.userName + "(" + data.openId + "): " + data.giftName + "(" + data.giftId + ") * " + data.giftNum);
         }
         Bukkit.getPluginManager().callEvent(new LiveGiftEvent(data));
     }
@@ -79,7 +79,7 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     @Override
     public void onReceivedGuardBuy(Guard data) {
         if (plugin.debug) {
-            logger.info("收到大航海 " + data.userInfo.userName + "(" + data.userInfo.uid + "): " + data.guardUnit + " (" + data.guardLevel + "级) " + data.guardNum);
+            logger.info("收到大航海 " + data.userInfo.userName + "(" + data.userInfo.openId + "): " + data.guardUnit + " (" + data.guardLevel + "级) " + data.guardNum);
         }
         Bukkit.getPluginManager().callEvent(new LiveGuardBuyEvent(data));
     }
@@ -87,7 +87,7 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     @Override
     public void onReceivedSuperChat(SuperChat data) {
         if (plugin.debug) {
-            logger.info("收到SC " + data.userName + "(" + data.uid + "): ￥" + data.rmb + " " + data.message);
+            logger.info("收到SC " + data.userName + "(" + data.openId + "): ￥" + data.rmb + " " + data.message);
         }
         Bukkit.getPluginManager().callEvent(new LiveSuperChatEvent(data));
     }
@@ -100,7 +100,7 @@ public class CraftBLiveClient extends WebSocketBLiveClient {
     @Override
     public void onReceivedLike(Like data) {
         if (plugin.debug) {
-            logger.info("收到 " + data.userName + "(" + data.uid + ") 的 " + data.likeCount + " 个点赞");
+            logger.info("收到 " + data.userName + "(" + data.openId + ") 的 " + data.likeCount + " 个点赞");
         }
         Bukkit.getPluginManager().callEvent(new LiveLikeEvent(data));
     }

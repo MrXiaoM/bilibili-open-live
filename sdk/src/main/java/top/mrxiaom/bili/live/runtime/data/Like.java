@@ -15,10 +15,17 @@ public class Like {
     public String userName;
 
     /**
-     * 用户UID
+     * 用户UID (即将弃用)
      */
+    @Deprecated
     @SerializedName("uid")
-    public long uid;
+    public long uid = -1;
+
+    /**
+     * 用户唯一标识
+     */
+    @SerializedName("open_id")
+    public String openId;
 
     /**
      * 用户头像
