@@ -48,6 +48,9 @@ public class PlaceholderHook extends PlaceholderExpansion {
         if (params.equalsIgnoreCase("uid")) {
             return String.valueOf(client.startInfo.data.anchorInfo.uid);
         }
+        if (params.equalsIgnoreCase("open_id")) {
+            return String.valueOf(client.startInfo.data.anchorInfo.openId);
+        }
         if (params.equalsIgnoreCase("room_id")) {
             return String.valueOf(client.startInfo.data.anchorInfo.roomId);
         }
