@@ -10,3 +10,12 @@
 SDK 逻辑在子模块 [SDK](/sdk) 中，与 Minecraft 插件实现分离。
 
 SDK 使用示例详见 [CraftBLiveClient.java](src/main/java/top/mrxiaom/bili/bukkit/CraftBLiveClient.java)
+
+## 插件命令
+
+```
+/bili connect [连接码] - 连接到开放平台，不输入连接码时，使用配置文件里的默认code
+/bili code <名称> - 连接到开放平台，使用配置文件里 codes 指定名称对应的连接码
+/bili close - 断开与开放平台连接
+/bili reload - 重载配置文件
+```
